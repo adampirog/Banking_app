@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Date, ForeignKey, Integer, String, TIMESTAMP
+from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP
 from sqlalchemy.orm import relationship
 from passlib.hash import sha256_crypt as sha
 import jwt
@@ -79,7 +79,7 @@ class Deposit(db.Model):
         for _ in range(17):
             tmp_iban += random.choice(string.digits)
             
-        while(Deposit.query.filter_by(id=tmp_iban).first() is not None):
+        while((Deposit.query.filter_by(id=tmp_iban).first() is not None) and (Loan.query.filter_by(id=tmp_iban).first())):
             tmp_iban = 'PL02' + '1920' + '001'
             for _ in range(17):
                 tmp_iban += random.choice(string.digits)
@@ -96,20 +96,66 @@ class Deposit(db.Model):
 class Loan(db.Model):
     __tablename__ = 'loans'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String(28), primary_key=True, autoincrement=False)
     status = Column(String(50), nullable=False)
     purpose = Column(String(150), nullable=False)
     totalValue = Column(Integer, nullable=False)
-    nextInstallmentValue = Column(Integer, nullable=False)
-    nextInstallmentDate = Column(Date, nullable=False)
+    installments = Column(Integer, nullable=False)
+    
     interestPaid = Column(Integer, nullable=False)
-    penaltyFee = Column(Integer, nullable=False)
+    interestUnpaid = Column(Integer, nullable=False)
+    
     principalPaid = Column(Integer, nullable=False)
     principalUnpaid = Column(Integer, nullable=False)
+    
+    penaltyFee = Column(Integer, nullable=False)
+    acceptanceDate = Column(TIMESTAMP, nullable=True)
+    
     depositId = Column(ForeignKey('deposits.id'), nullable=False, index=True)
 
     deposit = relationship('Deposit')
-
+    
+    def __init__(self, depositId, value, installments):
+        self.depositId = depositId
+        self.status = "pending"
+        self.totalValue = value
+        self.installments = installments
+        
+        self.interestPaid = 0
+        self.interestUnpaid = 0
+        
+        self.principalPaid = 0
+        self.principalUnpaid = value
+        
+        self.penaltyFee = 0
+        
+        tmp_iban = 'PL02' + '1920' + '001'
+        for _ in range(17):
+            tmp_iban += random.choice(string.digits)
+            
+        while((Deposit.query.filter_by(id=tmp_iban).first() is not None) and (Loan.query.filter_by(id=tmp_iban).first())):
+            tmp_iban = 'PL02' + '1920' + '001'
+            for _ in range(17):
+                tmp_iban += random.choice(string.digits)
+                     
+        self.id = tmp_iban
+        
+    def get_dict(self):
+        data = {'id': self.id,
+                'depositId': self.depositId,
+                'status': self.status,
+                'purpose': self.purpose,
+                'totalValue': self.totalValue,
+                'interestPaid': self.interestPaid,
+                'interestUnpaid': self.interestUnpaid,
+                'principalPaid': self.principalPaid,
+                'principalUnpaid': self.principalUnpaid,
+                'penaltyFee': self.penaltyFee,
+                'acceptanceDate': self.acceptanceDate,
+                'installments': self.installments
+                }
+        return data 
+        
 
 class Transfer(db.Model):
     __tablename__ = 'transfers'

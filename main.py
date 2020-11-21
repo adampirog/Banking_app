@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from database_interface import db, app, token_required
-from database_interface import User, Deposit, Transfer
+from database_interface import User, Deposit, Transfer, Loan
 import jwt
 from datetime import datetime, timedelta
 from sqlalchemy import and_
@@ -136,6 +136,7 @@ def create_deposit(caller):
                
         return jsonify({'message': 'Success'}), 200    
     except Exception as e:
+        db.session.rollback()
         print(e)
         return jsonify({'message': 'An error occured'}), 400
     
@@ -213,6 +214,105 @@ def get_outgoing_transfers(caller):
                
         return jsonify(result), 200      
     except Exception as e:
+        print(e)
+        return jsonify({'message': 'An error occured'}), 400
+    
+    
+@app.route('/client/loans', methods=['GET'])
+@token_required
+def get_loans(caller):
+    
+    try:
+        userId = request.args.get('clientId', type=int)
+    
+        if (caller.userType != 'admin') and (caller.id != userId):
+            return jsonify({'message': 'Unauthorized call'}), 400
+        
+        loans = db.session.query(Loan).join(Deposit).join(User).filter(User.id == userId).all()
+        
+        result = []
+        for loan in loans:
+            result.append(loan.get_dict())
+               
+        return jsonify(result), 200      
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'An error occured'}), 400
+    
+    
+@app.route('/client/loans', methods=['POST'])
+@token_required
+def create_loan(caller):
+    try:
+        userId = request.args.get('clientId', type=int)
+        data = request.get_json()
+    
+        if (caller.userType != 'admin') and (caller.id != userId):
+            return jsonify({'message': 'Unauthorized call'}), 400
+        
+        deposit = db.session.query(Deposit).join(User).filter(User.id == userId).first()
+        if(deposit is None):
+            return jsonify({'message': 'Client has no deposit'}), 400
+        
+        loan = Loan(deposit.id, data['value'], data['installments'])
+        loan.purpose = data['purpose']
+        
+        db.session.add(loan)
+        db.session.commit()
+               
+        return jsonify({'message': 'Success'}), 200    
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return jsonify({'message': 'An error occured'}), 400
+
+
+@app.route('/loans', methods=['GET'])
+@token_required
+def filter_loans(caller):
+    try:
+        data = request.get_json()
+    
+        if (caller.userType != 'admin'):
+            return jsonify({'message': 'Unauthorized call'}), 400
+        
+        result = []
+        
+        if('status' and 'iban' in data):
+            loans = db.session.query(Loan).join(Deposit).filter(Deposit.id == data['iban'] and Loan.status == data['status']).all()
+        elif('status' in data):
+            loans = db.session.query(Loan).filter(Loan.status == data['status']).all()
+        elif('iban' in data):
+            loans = db.session.query(Loan).join(Deposit).filter(Deposit.id == data['iban']).all()
+        
+        for loan in loans:
+            result.append(loan.get_dict())
+               
+        return jsonify(result), 200    
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'An error occured'}), 400
+    
+    
+@app.route('/loans', methods=['PATCH'])
+@token_required
+def change_loan_status(caller):
+    try:
+        data = request.get_json()
+    
+        if (caller.userType != 'admin'):
+            return jsonify({'message': 'Unauthorized call'}), 400
+        
+        loan = db.session.query(Loan).filter(Loan.id == data['iban']).first()
+        
+        if(data['status'] == 'open' and loan.status == "pending"):
+            loan.acceptanceDate = datetime.now()
+        loan.status = data['status']
+        db.session.commit()
+               
+        return jsonify({'message': 'Success'}), 200    
+    except Exception as e:
+        db.session.rollback()
         print(e)
         return jsonify({'message': 'An error occured'}), 400
     
