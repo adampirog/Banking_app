@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP
+from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP, FLOAT
 from sqlalchemy.orm import relationship
 from passlib.hash import sha256_crypt as sha
 import jwt
@@ -98,36 +98,32 @@ class Loan(db.Model):
 
     id = Column(String(28), primary_key=True, autoincrement=False)
     status = Column(String(50), nullable=False)
-    purpose = Column(String(150), nullable=False)
-    totalValue = Column(Integer, nullable=False)
+    purpose = Column(String(150))
+    
+    value = Column(Integer, nullable=False)
     installments = Column(Integer, nullable=False)
+    interestRate = Column(FLOAT, nullable=False)
     
-    interestPaid = Column(Integer, nullable=False)
-    interestUnpaid = Column(Integer, nullable=False)
+    installmentsPaid = Column(Integer, nullable=False)
     
-    principalPaid = Column(Integer, nullable=False)
-    principalUnpaid = Column(Integer, nullable=False)
-    
-    penaltyFee = Column(Integer, nullable=False)
     acceptanceDate = Column(TIMESTAMP, nullable=True)
+    rateValue = Column(Integer, nullable=True)
     
     depositId = Column(ForeignKey('deposits.id'), nullable=False, index=True)
 
     deposit = relationship('Deposit')
     
-    def __init__(self, depositId, value, installments):
+    def __init__(self, depositId, value, installments, interestRate):
         self.depositId = depositId
         self.status = "pending"
-        self.totalValue = value
+        
+        self.value = value
         self.installments = installments
+        self.interestRate = interestRate
+        self.installmentsPaid = 0
         
-        self.interestPaid = 0
-        self.interestUnpaid = 0
-        
-        self.principalPaid = 0
-        self.principalUnpaid = value
-        
-        self.penaltyFee = 0
+        #((loans.value/loans.installmens) + (loans.value - (loans.value/loans.installmens) * installmentsPaid) * interestRate)
+        self.rateValue = (self.value / self.installments) + (self.value - (self.value / self.installments) * self.installmentsPaid) * interestRate
         
         tmp_iban = 'PL02' + '1920' + '001'
         for _ in range(17):
@@ -145,14 +141,12 @@ class Loan(db.Model):
                 'depositId': self.depositId,
                 'status': self.status,
                 'purpose': self.purpose,
-                'totalValue': self.totalValue,
-                'interestPaid': self.interestPaid,
-                'interestUnpaid': self.interestUnpaid,
-                'principalPaid': self.principalPaid,
-                'principalUnpaid': self.principalUnpaid,
-                'penaltyFee': self.penaltyFee,
+                'value': self.value,
+                'installments': self.installments,
+                'interestRate': self.interestRate,
                 'acceptanceDate': self.acceptanceDate,
-                'installments': self.installments
+                'rateValue': self.rateValue,
+                'installmentsPaid': self.installmentsPaid,
                 }
         return data 
         
@@ -165,6 +159,7 @@ class Transfer(db.Model):
     transferDate = Column(TIMESTAMP, nullable=False, default=datetime.now)
     sender = Column(ForeignKey('deposits.id'), nullable=False, index=True)
     receiver = Column(ForeignKey('deposits.id'), nullable=False, index=True)
+    description = Column(String(30))
 
     receiverDeposit = relationship('Deposit', primaryjoin='Transfer.receiver == Deposit.id')
     senderDeposit = relationship('Deposit', primaryjoin='Transfer.sender == Deposit.id')
@@ -187,14 +182,20 @@ class Transfer(db.Model):
 class RepaymentRecord(db.Model):
     __tablename__ = 'repaymentRecords'
 
-    id = Column(Integer, primary_key=True, autoincrement=True, default=datetime.now)
-    principal = Column(Integer, nullable=False)
-    interest = Column(Integer, nullable=False)
-    value = Column(Integer, nullable=False)
-    description = Column(String(150))
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    amount = Column(Integer, nullable=False)
+    paymentDate = Column(TIMESTAMP, nullable=False)
     loanId = Column(ForeignKey('loans.id'), nullable=False, index=True)
 
     loan = relationship('Loan')
+    
+    def get_dict(self):
+        data = {'id': self.id,
+                'amount': self.amount,
+                'paymentDate': self.paymentDate,
+                'loanId': self.loanId     
+                }
+        return data
 
 
 def token_required(f):
@@ -235,9 +236,12 @@ def mock_fill(db):
     admin = User("admin", "admin@wp.pl", "admin")
     
     dep1 = Deposit(1)
-    dep1.balance = 1000
+    dep1.balance = 10000
     dep2 = Deposit(2)
-    dep2.balance = 2000
+    dep2.balance = 10000
+    
+    loan1 = Loan(dep1.id, 1000, 10, 0.1)
+    loan2 = Loan(dep2.id, 500, 5, 0.1)
     
     db.session.add(account)
     db.session.add(user)
@@ -245,6 +249,8 @@ def mock_fill(db):
     db.session.add(admin)
     db.session.add(dep1)
     db.session.add(dep2)
+    db.session.add(loan1)
+    db.session.add(loan2)
     
     db.session.commit()
 

@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from database_interface import db, app, token_required
-from database_interface import User, Deposit, Transfer, Loan
+from database_interface import User, Deposit, Transfer, Loan, RepaymentRecord
 import jwt
 from datetime import datetime, timedelta
 from sqlalchemy import and_
@@ -163,6 +163,8 @@ def transfer(caller):
         receiver_deposit.balance += amount
         
         record = Transfer(sender_deposit.id, receiver_deposit.id, amount)
+        if('description' in data):
+            record.description = data['description']
         
         db.session.add(record)
         db.session.commit()
@@ -254,7 +256,11 @@ def create_loan(caller):
         if(deposit is None):
             return jsonify({'message': 'Client has no deposit'}), 400
         
-        loan = Loan(deposit.id, data['value'], data['installments'])
+        interestRate = float(data['interestRate'])
+        if(interestRate < 0 or interestRate > 1):
+            return jsonify({'message': 'Invalid interest rate'}), 400
+        
+        loan = Loan(deposit.id, data['value'], data['installments'], interestRate)
         loan.purpose = data['purpose']
         
         db.session.add(loan)
@@ -307,12 +313,55 @@ def change_loan_status(caller):
         
         if(data['status'] == 'open' and loan.status == "pending"):
             loan.acceptanceDate = datetime.now()
+            deposit = Deposit.query.filter_by(id=loan.depositId).first()
+            deposit.balance += loan.value
+
         loan.status = data['status']
         db.session.commit()
                
         return jsonify({'message': 'Success'}), 200    
     except Exception as e:
         db.session.rollback()
+        print(e)
+        return jsonify({'message': 'An error occured'}), 400
+
+
+@app.route('/loans/records', methods=['GET'])
+@token_required
+def get_repayment_records(caller):
+    try:
+        data = request.get_json()
+        
+        if (caller.userType != 'admin'):
+            return jsonify({'message': 'Unauthorized call'}), 400
+        
+        records = RepaymentRecord.query.filter_by(loanId=data['loanId']).all()
+        result = []
+        for item in records:
+            result.append(item.get_dict())
+               
+        return jsonify(result), 200    
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'An error occured'}), 400
+    
+    
+@app.route('client/loans/records', methods=['GET'])
+@token_required
+def get_client_repayment_records(caller):
+    try:
+        userId = request.args.get('clientId', type=int)
+        
+        if (caller.userType != 'admin') and (caller.id != userId):
+            return jsonify({'message': 'Unauthorized call'}), 400
+        
+        records = db.session.Query(RepaymentRecord).join(Deposit).join(User).filter(User.id == userId).all()
+        result = []
+        for item in records:
+            result.append(item.get_dict())
+               
+        return jsonify(result), 200    
+    except Exception as e:
         print(e)
         return jsonify({'message': 'An error occured'}), 400
     
