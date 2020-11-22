@@ -10,7 +10,7 @@ from sqlalchemy import and_
 def register():
     try:
         data = request.get_json()
-        new_user = User(data['type'], data['email'], data['password'])
+        new_user = User('client', data['email'], data['password'])
         new_user.firstName = data['firstName']
         new_user.lastName = data['lastName']
         new_user.phone = data['phone']
@@ -33,7 +33,7 @@ def login_user():
         
         if(user.verify(data['password'])):
             token = jwt.encode({'userId': user.id, 'exp': datetime.utcnow() + timedelta(minutes=30)}, app.config['SECRET_KEY'])
-            return jsonify({'role': user.userType, 'token:': token.decode('UTF-8')}), 200
+            return jsonify({'clientId': user.id, 'role': user.userType, 'token:': token.decode('UTF-8')}), 200
         
         return jsonify({'message': 'invalid password'}), 400
     except Exception as e:
