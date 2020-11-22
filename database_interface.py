@@ -96,7 +96,7 @@ class Deposit(db.Model):
 class Loan(db.Model):
     __tablename__ = 'loans'
 
-    id = Column(String(28), primary_key=True, autoincrement=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     status = Column(String(50), nullable=False)
     purpose = Column(String(150))
     
@@ -124,17 +124,6 @@ class Loan(db.Model):
         
         #((loans.value/loans.installmens) + (loans.value - (loans.value/loans.installmens) * installmentsPaid) * interestRate)
         self.rateValue = (self.value / self.installments) + (self.value - (self.value / self.installments) * self.installmentsPaid) * interestRate
-        
-        tmp_iban = 'PL02' + '1920' + '001'
-        for _ in range(17):
-            tmp_iban += random.choice(string.digits)
-            
-        while((Deposit.query.filter_by(id=tmp_iban).first() is not None) and (Loan.query.filter_by(id=tmp_iban).first())):
-            tmp_iban = 'PL02' + '1920' + '001'
-            for _ in range(17):
-                tmp_iban += random.choice(string.digits)
-                     
-        self.id = tmp_iban
         
     def get_dict(self):
         data = {'id': self.id,

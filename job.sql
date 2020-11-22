@@ -24,7 +24,7 @@ DO BEGIN
 
     UPDATE loans
     SET loans.status = 'closed'
-    WHERE loans.installmentsPaid = loans.installments + 1;
+    WHERE loans.installmentsPaid >= loans.installments;
 
 END |
 delimiter ;

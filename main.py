@@ -330,12 +330,12 @@ def change_loan_status(caller):
 @token_required
 def get_repayment_records(caller):
     try:
-        data = request.get_json()
+        loanId = request.args.get('loanId', type=int)
         
         if (caller.userType != 'admin'):
             return jsonify({'message': 'Unauthorized call'}), 400
         
-        records = RepaymentRecord.query.filter_by(loanId=data['loanId']).all()
+        records = RepaymentRecord.query.filter_by(loanId=loanId).all()
         result = []
         for item in records:
             result.append(item.get_dict())
@@ -346,7 +346,7 @@ def get_repayment_records(caller):
         return jsonify({'message': 'An error occured'}), 400
     
     
-@app.route('client/loans/records', methods=['GET'])
+@app.route('/client/loans/records', methods=['GET'])
 @token_required
 def get_client_repayment_records(caller):
     try:
@@ -355,7 +355,7 @@ def get_client_repayment_records(caller):
         if (caller.userType != 'admin') and (caller.id != userId):
             return jsonify({'message': 'Unauthorized call'}), 400
         
-        records = db.session.Query(RepaymentRecord).join(Deposit).join(User).filter(User.id == userId).all()
+        records = db.session.query(RepaymentRecord).join(Loan).join(Deposit).join(User).filter(User.id == userId).all()
         result = []
         for item in records:
             result.append(item.get_dict())
