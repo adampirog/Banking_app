@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP, FLOAT
 from sqlalchemy.orm import relationship
 from passlib.hash import sha256_crypt as sha
@@ -13,6 +14,7 @@ from datetime import datetime
 salt = "8xVMjpoJV3"
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://project:pwr2020@localhost/bank"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'Nt7mP9ivQPTk'

@@ -10,9 +10,9 @@
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:4200",
             "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--disable-web-security"
-            ],
+            // "runtimeArgs": [
+            //     "--disable-web-security"
+            // ],
         }
     ]
 }
