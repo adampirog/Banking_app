@@ -16,13 +16,14 @@ Default crecentials used:
   
     `sudo apt install npm` 
     
-    lub po windowsowemu przez .exe
+    https://nodejs.org/en/download/
     
  * zainstaluj node.js:
     
     `sudo apt install nodejs`
-    
-        lub po windowsowemu przez .exe
+
+lub po windowsowemu przez instalator:
+https://nodejs.org/en/download/
   
 
 * w katalogu aplikacji uruchom:
