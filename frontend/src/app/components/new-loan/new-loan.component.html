@@ -1,0 +1,45 @@
+<mat-card class="centerCard">
+    <mat-card-content>
+        <form [formGroup]="newLoanForm">
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Oprocentowanie</mat-label>
+                    <input matInput type="number" formControlName="interestRate">
+
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Cel kredytu</mat-label>
+                    <input matInput type="text" formControlName="purpose" required>
+                    <mat-error *ngIf="newLoanForm.controls.purpose.touched && newLoanForm.controls.purpose.invalid">
+                        <span *ngIf="newLoanForm.controls.purpose.errors.required">Wpisz cel kredytu.</span>
+                    </mat-error>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Kwota kredytu</mat-label>
+                    <input matInput type="number" formControlName="value" required>
+                    <mat-error *ngIf="newLoanForm.controls.value.touched && newLoanForm.controls.value.invalid">
+                        <span *ngIf="newLoanForm.controls.value.errors.required">Wpisz kwotę kredytu.</span>
+                    </mat-error>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>Liczba rat</mat-label>
+                    <input matInput type="number" formControlName="installments" required>
+                    <mat-error
+                        *ngIf="newLoanForm.controls.installmentstouched && newLoanForm.controls.installments.invalid">
+                        <span *ngIf="newLoanForm.controls.installments.errors.required">Wpisz liczbę rat.</span>
+                    </mat-error>
+                </mat-form-field>
+            </p>
+            <p>
+                <button [disabled]="clicked" mat-raised-button color="primary" (click)="post()">Post
+                    transaction</button>
+            </p>
+        </form>
+    </mat-card-content>
+</mat-card>

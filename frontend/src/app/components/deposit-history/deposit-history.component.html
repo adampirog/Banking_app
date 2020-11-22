@@ -1,0 +1,53 @@
+<mat-card class="centerCard">
+    <div *ngIf="incoming.length>0">
+        <ng-container *ngFor="let transfer of incoming">
+            <mat-card style="border-style: dashed;">
+                <mat-card-header>
+                    <mat-card-title>Przelew przychodzący</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-list>
+                        <span>Nadawca:</span>
+                        <mat-list-item>{{transfer.sender}}</mat-list-item>
+                        <span>Kwota przelewu:</span>
+                        <mat-list-item>{{transfer.value}} PLN</mat-list-item>
+                        <span>Data przelewu</span>
+                        <mat-list-item>{{transfer.transferDate}}</mat-list-item>
+                    </mat-list>
+                </mat-card-content>
+            </mat-card>
+        </ng-container>
+    </div>
+
+    <div *ngIf="outgoing.length>0">
+        <ng-container *ngFor="let transfer of outgoing">
+            <mat-card style="border-style: dashed;">
+                <mat-card-header>
+                    <mat-card-title>Przelew wychodzący</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-list>
+                        <span>Odbiorca:</span>
+                        <mat-list-item>{{transfer.receiver}}</mat-list-item>
+                        <span>Kwota przelewu:</span>
+                        <mat-list-item>{{transfer.value}} PLN</mat-list-item>
+                        <span>Data przelewu</span>
+                        <mat-list-item>{{transfer.transferDate}}</mat-list-item>
+                    </mat-list>
+                </mat-card-content>
+            </mat-card>
+        </ng-container>
+    </div>
+    <div *ngIf="incoming.length===0 && outgoing.length===0">
+        <mat-card style="border-style: dashed;">
+            <mat-card-header>
+                <mat-card-title>Nie ma żadnych przelewów : (</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div>Może chcesz zrobić przelewik?</div>
+                <a href='transactions/new' class=button mat-raised-button color="primary">Wykonaj przelew</a>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+</mat-card>

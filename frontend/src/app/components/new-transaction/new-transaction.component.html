@@ -1,0 +1,40 @@
+<mat-card class="centerCard">
+    <mat-card-content>
+        <form *ngIf="canPostTransaction" [formGroup]="transactionForm">
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>IBAN nadawcy</mat-label>
+                    <input matInput type="text" formControlName="sender">
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>IBAN odbiorcy</mat-label>
+                    <input matInput type="text" formControlName="receiver" required>
+                    <mat-error
+                        *ngIf="transactionForm.controls.receiver.touched && transactionForm.controls.receiver.invalid">
+                        <span *ngIf="transactionForm.controls.receiver.errors.required">Podaj IBAN nadawcy.</span>
+                    </mat-error>
+                </mat-form-field>
+            </p>
+            <p>
+                <mat-form-field appearance="outline">
+                    <mat-label>IBAN odbiorcy</mat-label>
+                    <input matInput type="number" formControlName="amount" required>
+                    <mat-error
+                        *ngIf="transactionForm.controls.amount.touched && transactionForm.controls.amount.invalid">
+                        <span *ngIf="transactionForm.controls.amount.errors.required">Wpisz kwotę przelewu.</span>
+                    </mat-error>
+                </mat-form-field>
+            </p>
+            <p>
+                <button [disabled]="clicked" mat-raised-button color="primary" (click)="post()">Post transaction</button>
+            </p>
+
+        </form>
+
+        <span *ngIf="!canPostTransaction">
+            Aby wykonać przelew, musisz najpierw posiadać rachunek osobisty.
+        </span>
+    </mat-card-content>
+</mat-card>

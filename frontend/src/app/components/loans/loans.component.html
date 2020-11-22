@@ -1,0 +1,41 @@
+<mat-card class="centerCard">
+    <div *ngIf="loans.length>0">
+        <ng-container *ngFor="let loan of loans">
+            <mat-card style="border-style: dashed;">
+                <mat-card-header>
+                    <mat-card-title *ngIf="loan.purpose!==null">Kredyt: {{loan.purpose}}</mat-card-title>
+                    <mat-card-title *ngIf="loan.purpose===null">Kredyt bez nazwy</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <mat-list>
+                        <span>Status kredytu:</span>
+                        <mat-list-item>{{loan.status}}</mat-list-item>
+                        <span>IBAN:</span>
+                        <mat-list-item>{{loan.id}}</mat-list-item>
+                        <span>Saldo:</span>
+                        <mat-list-item>{{loan.value}} PLN</mat-list-item>
+                        <span>Ilość rat:</span>
+                        <mat-list-item>{{loan.installments}}</mat-list-item>
+                        <span>Ilość spłaconych rat:</span>
+                        <mat-list-item>{{loan.installmentsPaid}}</mat-list-item>
+                    </mat-list>
+                </mat-card-content>
+            </mat-card>
+        </ng-container>
+        <div>
+            <span>Potrzebujesz więcej mamony?</span>
+            <a href='loans/new' class=button mat-raised-button color="primary">To szybko klikaj tu</a>
+        </div>
+    </div>
+    <div *ngIf="loans.length===0">
+        <mat-card style="border-style: dashed;">
+            <mat-card-header>
+                <mat-card-title>Nie masz żadnych kredytów! czy chcesz założyć nowy?</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <span>Załóż kredyt, szybko</span>
+                <a href='loans/new' class=button mat-raised-button color="primary">Złóż wniosek o kredyt</a>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</mat-card>
