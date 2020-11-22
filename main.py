@@ -33,7 +33,7 @@ def login_user():
         
         if(user.verify(data['password'])):
             token = jwt.encode({'userId': user.id, 'exp': datetime.utcnow() + timedelta(minutes=30)}, app.config['SECRET_KEY'])
-            return jsonify({'clientId': user.id, 'role': user.userType, 'token:': token.decode('UTF-8')}), 200
+            return jsonify({'clientId': user.id, 'role': user.userType, 'token': token.decode('UTF-8')}), 200
         
         return jsonify({'message': 'invalid password'}), 400
     except Exception as e:
@@ -205,7 +205,7 @@ def get_outgoing_transfers(caller):
     try:
         userId = request.args.get('clientId', type=int)
     
-        if (caller.userType != 'admin') and (caller.id != userId):
+        if (caller.id != userId):
             return jsonify({'message': 'Unauthorized call'}), 400
         
         transfers = db.session.query(Transfer).join(Deposit, and_(Transfer.sender == Deposit.id)).join(User).filter(User.id == userId)
@@ -227,7 +227,7 @@ def get_loans(caller):
     try:
         userId = request.args.get('clientId', type=int)
     
-        if (caller.userType != 'admin') and (caller.id != userId):
+        if (caller.id != userId):
             return jsonify({'message': 'Unauthorized call'}), 400
         
         loans = db.session.query(Loan).join(Deposit).join(User).filter(User.id == userId).all()
@@ -249,7 +249,7 @@ def create_loan(caller):
         userId = request.args.get('clientId', type=int)
         data = request.get_json()
     
-        if (caller.userType != 'admin') and (caller.id != userId):
+        if (caller.id != userId):
             return jsonify({'message': 'Unauthorized call'}), 400
         
         deposit = db.session.query(Deposit).join(User).filter(User.id == userId).first()
@@ -259,7 +259,7 @@ def create_loan(caller):
         interestRate = float(data['interestRate'])
         if(interestRate < 0 or interestRate > 1):
             return jsonify({'message': 'Invalid interest rate'}), 400
-        
+            
         loan = Loan(deposit.id, data['value'], data['installments'], interestRate)
         loan.purpose = data['purpose']
         
