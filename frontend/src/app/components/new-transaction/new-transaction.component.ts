@@ -38,7 +38,7 @@ export class NewTransactionComponent implements OnInit {
       error: value => {
         this.canPostTransaction = false;
       }
-    })
+    });
   }
 
   post() {
@@ -58,11 +58,13 @@ export class NewTransactionComponent implements OnInit {
         }
         , error: value => {
           this.snackBar.open(value.error.message, null, { duration: 3000 });
+          this.clicked = false;
         }
       });
     }
     else {
       this.snackBar.open('Proszę wypełnić poprawnie formularz.', null, { duration: 3000 });
+      this.clicked = false;
     }
 
   }

@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
   login() {
     console.log(this.loginForm);
     if (this.loginForm.invalid) {
+      this.snackBar.open('Wypełnij poprawnie formularz', null, { duration: 5000 });
       return;
     }
     this.userService.login(this.loginForm.value as LoginForm).subscribe({
@@ -36,7 +37,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate([returnUrl]);
       },
       error: error => {
-        this.snackBar.open(error.error.message, null, { duration: 5000 });
+        this.snackBar.open('Niepoprawne dane', null, { duration: 5000 });
       }
     }
     );

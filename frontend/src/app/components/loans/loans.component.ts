@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DepositService } from '@app/_services/deposit/deposit.service';
 import { LoanService, Loan } from '@app/_services/loan/loan.service';
 import { UserService } from '@app/_services/user/user.service';
 
@@ -10,8 +11,10 @@ import { UserService } from '@app/_services/user/user.service';
 export class LoansComponent implements OnInit {
 
   loans = new Array<Loan>();
+  hasDeposit = false;
   constructor(private loanService: LoanService,
-    private userService: UserService) { }
+    private userService: UserService,
+    private depositService: DepositService) { }
 
   ngOnInit(): void {
     this.loanService.getLoans().subscribe({
@@ -28,6 +31,11 @@ export class LoansComponent implements OnInit {
       }
       , error: result => {
         this.loans = [];
+      }
+    });
+    this.depositService.getDeposit().subscribe({
+      next: value => {
+        this.hasDeposit = true;
       }
     });
   }

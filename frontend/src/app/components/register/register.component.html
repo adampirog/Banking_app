@@ -6,53 +6,52 @@
                     <mat-label>Email</mat-label>
                     <input matInput type="text" formControlName="email" required>
                     <mat-error *ngIf="registerForm.controls.email.touched && registerForm.controls.email.invalid">
-                        <span *ngIf="registerForm.controls.email.errors.required">Please insert email.</span>
-                        <span *ngIf="registerForm.controls.email.errors.email">Invalid email.</span>
+                        <span *ngIf="registerForm.controls.email.errors.required">Podaj adres email.</span>
+                        <span *ngIf="registerForm.controls.email.errors.email">Niepoprawny email.</span>
                     </mat-error>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
+                    <mat-label>Hasło</mat-label>
                     <input matInput type="password" formControlName="password" required>
                     <mat-error
                         *ngIf="registerForm.controls.password.touched && registerForm.controls.password.invalid">
-                        <span *ngIf="registerForm.controls.password.errors.required">This field is mandatory.</span>
+                        <span *ngIf="registerForm.controls.password.errors.required">To pole jest wymagane.</span>
                     </mat-error>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="outline">
-                    <mat-label>First name</mat-label>
+                    <mat-label>Imię</mat-label>
                     <input matInput type="text" formControlName="firstName" required>
                     <mat-error *ngIf="registerForm.controls.firstName.touched && registerForm.controls.firstName.invalid">
-                        <span *ngIf="registerForm.controls.firstName.errors.required">Please insert your name.</span>
+                        <span *ngIf="registerForm.controls.firstName.errors.required">Podaj swoje imię.</span>
                     </mat-error>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="outline">
-                    <mat-label>First name</mat-label>
+                    <mat-label>Nazwisko</mat-label>
                     <input matInput type="text" formControlName="lastName" required>
-                    <mat-error *ngIf="registerForm.controls.lastName.touched && registerForm.controls.lastNameinvalid">
-                        <span *ngIf="registerForm.controls.lastName.errors.required">Please insert your last name.</span>
+                    <mat-error *ngIf="registerForm.controls.lastName.touched && registerForm.controls.lastName.invalid">
+                        <span *ngIf="registerForm.controls.lastName.errors">Podaj swoje nazwisko.</span>
                     </mat-error>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="outline">
-                    <mat-label>Phone number (polska)</mat-label>
+                    <mat-label>Numer telefonu (polska)</mat-label>
                     <input matInput type="text" formControlName="phone" required>
                     <mat-error *ngIf="registerForm.controls.phone.touched && registerForm.controls.phone.invalid">
-                        <span *ngIf="registerForm.controls.phone.errors.pattern">Invalid phone number (insert 9
-                            digits).</span>
+                        <span *ngIf="registerForm.controls.phone.errors">Niepoprawny numer telefonu (podaj 9 cyfr).</span>
                     </mat-error>
                 </mat-form-field>
             </p>
             <p>
-                <a href="login" class=button mat-raised-button color="primary">go back</a>
+                <a href="login" class=button mat-raised-button color="primary">Powrót</a>
                 <span class="flexExpand"></span>
-                <button mat-raised-button color="primary" (click)="register()">Register</button>
+                <button mat-raised-button color="primary" (click)="register()">Utwórz konto</button>
             </p>
         </form>
     </mat-card-content>

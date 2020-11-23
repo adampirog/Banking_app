@@ -6,25 +6,25 @@
                     <mat-label>Email</mat-label>
                     <input matInput type="text" formControlName="email" required>
                     <mat-error *ngIf="loginForm.controls.email.touched && loginForm.controls.email.invalid">
-                        <span *ngIf="loginForm.controls.email.errors.required">Please insert email.</span>
-                        <span *ngIf="loginForm.controls.email.errors.email">This is not an email.</span>
+                        <span *ngIf="loginForm.controls.email.errors.required">Podaj email.</span>
+                        <span *ngIf="loginForm.controls.email.errors.email">To nie jest email.</span>
                     </mat-error>
                 </mat-form-field>
             </p>
             <p>
                 <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
+                    <mat-label>Hasło</mat-label>
                     <input matInput type="password" formControlName="password" required>
                     <mat-error *ngIf="loginForm.controls.password.touched && loginForm.controls.password.invalid">
-                        <span *ngIf="loginForm.controls.password.errors.required">Please insert password.</span>
+                        <span *ngIf="loginForm.controls.password.errors">Wpisz hasło.</span>
                         
                     </mat-error>
                 </mat-form-field>
             </p>
             <p>
-                <button mat-raised-button color="primary" (click)="login()">Log In</button>
+                <button mat-raised-button color="primary" (click)="login()">Zaloguj</button>
                 <span class="flexExpand"></span>
-                <a href="register" class=button mat-raised-button color="primary" (click)="switchForm()">Register</a>
+                <a href="register" class=button mat-raised-button color="primary" (click)="switchForm()">Utwórz konto</a>
             </p>
         </form>
     </mat-card-content>
