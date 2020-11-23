@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP, FLOAT
+from flask_cors import CORS
+from sqlalchemy import Column, ForeignKey, Integer, String, TIMESTAMP, FLOAT, DECIMAL
 from sqlalchemy.orm import relationship
 from passlib.hash import sha256_crypt as sha
 import jwt
@@ -13,6 +14,7 @@ from datetime import datetime
 salt = "8xVMjpoJV3"
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://project:pwr2020@localhost/bank"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'Nt7mP9ivQPTk'
@@ -24,7 +26,7 @@ class Account(db.Model):
     __tablename__ = 'accounts'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    balance = Column(Integer, nullable=False)
+    balance = Column(DECIMAL(14, 2), nullable=False)
     description = Column(String(150))
 
 
@@ -66,7 +68,7 @@ class Deposit(db.Model):
     __tablename__ = 'deposits'
 
     id = Column(String(28), primary_key=True)
-    balance = Column(Integer, nullable=False)
+    balance = Column(DECIMAL(14, 2), nullable=False)
     userId = Column(ForeignKey('users.id'), nullable=False, index=True)
 
     user = relationship('User')
@@ -100,14 +102,14 @@ class Loan(db.Model):
     status = Column(String(50), nullable=False)
     purpose = Column(String(150))
     
-    value = Column(Integer, nullable=False)
+    value = Column(DECIMAL(14, 2), nullable=False)
     installments = Column(Integer, nullable=False)
     interestRate = Column(FLOAT, nullable=False)
     
     installmentsPaid = Column(Integer, nullable=False)
     
     acceptanceDate = Column(TIMESTAMP, nullable=True)
-    rateValue = Column(Integer, nullable=True)
+    rateValue = Column(DECIMAL(14, 2), nullable=True)
     
     depositId = Column(ForeignKey('deposits.id'), nullable=False, index=True)
 
@@ -144,7 +146,7 @@ class Transfer(db.Model):
     __tablename__ = 'transfers'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    value = Column(Integer, nullable=False)
+    value = Column(DECIMAL(14, 2), nullable=False)
     transferDate = Column(TIMESTAMP, nullable=False, default=datetime.now)
     sender = Column(ForeignKey('deposits.id'), nullable=False, index=True)
     receiver = Column(ForeignKey('deposits.id'), nullable=False, index=True)
@@ -172,7 +174,7 @@ class RepaymentRecord(db.Model):
     __tablename__ = 'repaymentRecords'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    amount = Column(Integer, nullable=False)
+    amount = Column(DECIMAL(14, 2), nullable=False)
     paymentDate = Column(TIMESTAMP, nullable=False)
     loanId = Column(ForeignKey('loans.id'), nullable=False, index=True)
 
@@ -197,16 +199,16 @@ def token_required(f):
             token = request.headers['token']
 
         if not token:
-            return jsonify({'message': 'Token is missing'}), 400
+            return jsonify({'message': 'Token is missing'}), 402
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
             current_user = User.query.filter_by(id=data['userId']).first()
         except jwt.ExpiredSignature:
-            return jsonify({'message': 'Token has expired'}), 400
+            return jsonify({'message': 'Token has expired'}), 408
         except Exception as e:
             print(e)
-            return jsonify({'message': 'token is invalid'}), 400
+            return jsonify({'message': 'Token is invalid'}), 401
 
         return f(current_user, *args, **kwargs)
     return decorator
@@ -225,9 +227,9 @@ def mock_fill(db):
     admin = User("admin", "admin@wp.pl", "admin")
     
     dep1 = Deposit(1)
-    dep1.balance = 10000
+    dep1.balance = 10000.234
     dep2 = Deposit(2)
-    dep2.balance = 10000
+    dep2.balance = 10000.355
     
     loan1 = Loan(dep1.id, 1000, 10, 0.1)
     loan2 = Loan(dep2.id, 500, 5, 0.1)
