@@ -1,0 +1,12 @@
+<mat-toolbar class="top-bar" color="primary">
+    <a routerLink="./clients" class="button" mat-fab color="primary">
+        <mat-icon svgIcon="dollar"></mat-icon>
+    </a>
+    <a routerLink="./clients" class="button" mat-raised-button color="primary">Klienci</a>
+    <a routerLink="./loans" class="button" mat-raised-button color="primary">Kredyty</a>
+    <a routerLink="./transactions/new" class="button" mat-raised-button color="primary">Wykonaj przelew</a>
+    <a routerLink="./accounts" class="button" mat-raised-button color="primary">Księga Główna</a>
+
+    <span class="flexExpand"></span>
+    <a routerLink="./logout" class="button" mat-raised-button color="basic" (click)="logout()">Wyloguj</a>
+</mat-toolbar>

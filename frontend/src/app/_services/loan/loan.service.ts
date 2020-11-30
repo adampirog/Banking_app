@@ -4,6 +4,12 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserService } from '../user/user.service';
 
+export enum LoanStatus {
+  open = 'open',
+  closed = 'closed',
+  rejected = 'rejected',
+  pending = 'pending'
+}
 
 export interface Loan {
   id: number;
@@ -13,7 +19,7 @@ export interface Loan {
   interestRate: number;
   purpose: string;
   rateValue: number;
-  status: string;
+  status: LoanStatus;
   value: number;
 }
 
@@ -32,13 +38,37 @@ export class LoanService {
   constructor(private userService: UserService,
     private http: HttpClient) { }
 
-  getLoans(): Observable<Array<Loan>> {
+  getUserLoans(): Observable<Array<Loan>> {
     const user = this.userService.user;
     return this.http.get<Array<Loan>>(`http://localhost:5000/client/loans?clientId=${user.clientId}`);
   }
 
-  newLoan(loan: LoanRequest) {
+  newUserLoan(loan: LoanRequest) {
     const user = this.userService.user;
-    return this.http.post(`http://localhost:5000/client/loans?clientId=${user.clientId}`, loan);
+    return this.newLoan(loan, user.clientId);
   }
+
+  newLoan(loan: LoanRequest, clientId: number) {
+    return this.http.post(`http://localhost:5000/client/loans?clientId=${clientId}`, loan);
+  }
+
+  getLoans(status: LoanStatus): Observable<Array<Loan>> {
+    return this.http.get<Array<Loan>>(`http://localhost:5000/loans?status=${status}`);
+  }
+
+  acceptLoan(acceptedLoan: Loan) {
+    const loan: Loan = { ...acceptedLoan };
+    loan.status = LoanStatus.open;
+    return this.updateLoan(loan);
+  }
+
+  rejectLoan(rejectedLoan: Loan) {
+    const loan: Loan = { ...rejectedLoan };
+    loan.status = LoanStatus.rejected;
+    return this.updateLoan(loan);
+  }
+  updateLoan(loan: Loan) {
+    return this.http.patch('http://localhost:5000/loans', loan);
+  }
+
 }
