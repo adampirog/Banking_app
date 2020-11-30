@@ -9,6 +9,36 @@ CREATE EVENT `Loans_payment`
     ENABLE
 DO BEGIN
 
+    -- add to liablity
+    UPDATE accounts
+    SET accounts.balance = accounts.balance + 
+        (
+            SELECT (loans.value/loans.installments)
+            FROM loans
+            WHERE loans.status = 'open'
+        )
+    WHERE accounts.description = 'liability';
+
+    -- substract from asset
+    UPDATE accounts
+    SET accounts.balance = accounts.balance - 
+        (
+            SELECT (loans.value/loans.installments)
+            FROM loans
+            WHERE loans.status = 'open'
+        )
+    WHERE accounts.description = 'asset';
+
+    -- add to bank income
+    UPDATE accounts
+    SET accounts.balance = accounts.balance + 
+        (
+            SELECT (loans.value - (loans.value/loans.installments) * installmentsPaid) * interestRate
+            FROM loans
+            WHERE loans.status = 'open'
+        )
+    WHERE accounts.description = 'income';
+
     -- calculate interest
     UPDATE loans
     SET loans.rateValue = ((loans.value/loans.installments) + (loans.value - (loans.value/loans.installments) * installmentsPaid) * interestRate)

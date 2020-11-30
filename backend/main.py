@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from database_interface import db, app, token_required
-from database_interface import User, Deposit, Transfer, Loan, RepaymentRecord
+from database_interface import User, Deposit, Transfer, Loan, RepaymentRecord, Account
 import jwt
 from datetime import datetime, timedelta
 from sqlalchemy import and_
@@ -311,10 +311,17 @@ def change_loan_status(caller):
         
         loan = db.session.query(Loan).filter(Loan.id == data['iban']).first()
         
+        #loan accepted
         if(data['status'] == 'open' and loan.status == "pending"):
             loan.acceptanceDate = datetime.now()
             deposit = Deposit.query.filter_by(id=loan.depositId).first()
             deposit.balance += loan.value
+            
+            liability = Account.query.filter_by(description="liability").first()
+            asset = Account.query.filter_by(description="asset").first()
+            
+            liability.balance -= loan.value
+            asset.balance += loan.value
 
         loan.status = data['status']
         db.session.commit()

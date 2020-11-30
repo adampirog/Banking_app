@@ -28,6 +28,10 @@ class Account(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     balance = Column(Integer, nullable=False)
     description = Column(String(150))
+    
+    def __init__(self, description, balance=0):
+        self.balance = balance
+        self.description = description
 
 
 class User(db.Model):
@@ -218,9 +222,9 @@ def mock_fill(db):
     db.drop_all()
     db.create_all()
     
-    account = Account()
-    account.balance = 1000000
-    account.description = "Main account"
+    account1 = Account("liability", 70000000)
+    account2 = Account("asset")
+    account3 = Account("income")
     
     user = User("client", "kowalski@wp.pl", "kowalski")
     user2 = User("client", "nowak@wp.pl", "nowak")
@@ -234,12 +238,17 @@ def mock_fill(db):
     loan1 = Loan(dep1.id, 1000, 10, 0.1)
     loan2 = Loan(dep2.id, 500, 5, 0.1)
     
-    db.session.add(account)
+    db.session.add(account1)
+    db.session.add(account2)
+    db.session.add(account3)
+    
     db.session.add(user)
     db.session.add(user2)
     db.session.add(admin)
+    
     db.session.add(dep1)
     db.session.add(dep2)
+    
     db.session.add(loan1)
     db.session.add(loan2)
     
