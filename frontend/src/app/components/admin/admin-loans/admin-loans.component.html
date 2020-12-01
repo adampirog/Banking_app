@@ -1,0 +1,40 @@
+<mat-card>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>Kredyty oczekujące na decyzję</mat-expansion-panel-header>
+            <mat-card-content>
+                <app-loans [loans]="pendingLoans" [canDecide]="true"></app-loans>
+            </mat-card-content>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-card>
+<mat-card>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>Kredyty odrzucone</mat-expansion-panel-header>
+            <mat-card-content>
+                <app-loans [loans]="rejectedLoans"></app-loans>
+            </mat-card-content>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-card>
+<mat-card>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>Kredyty zamknięte</mat-expansion-panel-header>
+            <mat-card-content>
+                <app-loans [loans]="closedLoans"></app-loans>
+            </mat-card-content>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-card>
+<mat-card>
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>Kredyty aktywne</mat-expansion-panel-header>
+            <mat-card-content>
+                <app-loans [loans]="openLoans"></app-loans>
+            </mat-card-content>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-card>

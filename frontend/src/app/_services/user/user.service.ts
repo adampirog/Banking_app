@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
+import { Deposit } from '../deposit/deposit.service';
 
 export interface LoginForm {
   email: string;
@@ -9,13 +10,19 @@ export interface LoginForm {
 }
 
 export interface User {
-  clientId?: number;
-  role: string;
+  id?: number;
+  userType: string;
   firstName: string;
   lastName: string;
   phone: string;
   email: string;
   password?: string;
+  deposit?: Deposit;
+}
+
+export enum Role {
+  Admin = 'admin',
+  Client = 'client'
 }
 
 export interface LoggedUserData {
@@ -50,5 +57,9 @@ export class UserService {
   logout(): Observable<void> {
     localStorage.removeItem('user');
     return of(null).pipe(delay(500));
+  }
+
+  getUsers(): Observable<Array<User>> {
+    return this.http.get<Array<User>>('http://localhost:5000/users');
   }
 }

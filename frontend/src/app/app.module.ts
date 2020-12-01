@@ -19,32 +19,48 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 // App imports
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { LandPageComponent } from './components/land-page/land-page.component';
-import { DepositSummaryComponent } from './components/deposit-summary/deposit-summary.component';
-import { LoginComponent } from './components/login/login.component';
-import { LoansComponent } from './components/loans/loans.component';
+
 import { TokenInterceptor } from './_helpers/auth-interceptor';
-import { RegisterComponent } from './components/register/register.component';
-import { DepositHistoryComponent } from './components/deposit-history/deposit-history.component';
-import { NewTransactionComponent } from './components/new-transaction/new-transaction.component';
-import { NewLoanComponent } from './components/new-loan/new-loan.component';
 
+import { RegisterComponent } from './components/common/register/register.component';
+import { DepositHistoryComponent } from './components/common/deposit-history/deposit-history.component';
+import { NewTransactionComponent } from './components/common/new-transaction/new-transaction.component';
+import { LoginComponent } from './components/common/login/login.component';
+import { LoansComponent } from './components/common/loans/loans.component';
+import { DepositInfoComponent } from './components/common/deposit-info/deposit-info.component';
 
+import { ToolbarComponent } from './components/client/toolbar/toolbar.component';
+import { NewLoanComponent } from './components/client/new-loan/new-loan.component';
+import { DepositSummaryComponent } from './components/client/deposit-summary/deposit-summary.component';
+import { ClientPageComponent } from './components/client/client-page/client-page.component';
+import { ClientLoansComponent } from './components/client/client-loans/client-loans.component';
+
+import { AdminToolbarComponent } from './components/admin/admin-toolbar/admin-toolbar.component';
+import { ClientListComponent } from './components/admin/client-list/client-list.component';
+import { AdminPageComponent } from './components/admin/admin-page/admin-page.component';
+import { AdminLoansComponent } from './components/admin/admin-loans/admin-loans.component';
+import { AccountsComponent } from './components/admin/accounts/accounts.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     ToolbarComponent,
-    LandPageComponent,
+    ClientPageComponent,
     DepositSummaryComponent,
     LoginComponent,
     LoansComponent,
     RegisterComponent,
     DepositHistoryComponent,
     NewTransactionComponent,
-    NewLoanComponent
+    NewLoanComponent,
+    ClientListComponent,
+    DepositInfoComponent,
+    AdminToolbarComponent,
+    AdminPageComponent,
+    AdminLoansComponent,
+    ClientLoansComponent,
+    AccountsComponent
   ],
   imports: [
     BrowserModule,

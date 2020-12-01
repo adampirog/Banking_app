@@ -22,23 +22,20 @@ export interface HistoryTransferRecord {
 })
 export class DepositService {
 
-  constructor(private http: HttpClient,
-    private userService: UserService) { }
+  constructor(private http: HttpClient) { }
 
-  getDeposit(): Observable<Deposit> {
-    const user = this.userService.user;
-    return this.http.get<Deposit>(`http://localhost:5000/client/deposit?clientId=${user.clientId}`).pipe(map(result => {
+  getDepositByClientId(clientId: number): Observable<Deposit> {
+    return this.http.get<Deposit>(`http://localhost:5000/client/deposit?clientId=${clientId}`).pipe(map(result => {
       console.log(result);
       return result;
     }));
   }
 
-  getOutgoingHistory(): Observable<Array<HistoryTransferRecord>> {
-    const user = this.userService.user;
-    return this.http.get<Array<HistoryTransferRecord>>(`http://localhost:5000/client/deposit/outgoing?clientId=${user.clientId}`);
+  getOutgoingHistory(clientId: number): Observable<Array<HistoryTransferRecord>> {
+    return this.http.get<Array<HistoryTransferRecord>>(`http://localhost:5000/client/deposit/outgoing?clientId=${clientId}`);
   }
-  getIncomingHistory(): Observable<Array<HistoryTransferRecord>> {
-    const user = this.userService.user;
-    return this.http.get<Array<HistoryTransferRecord>>(`http://localhost:5000/client/deposit/incoming?clientId=${user.clientId}`);
+
+  getIncomingHistory(clientId: number): Observable<Array<HistoryTransferRecord>> {
+    return this.http.get<Array<HistoryTransferRecord>>(`http://localhost:5000/client/deposit/incoming?clientId=${clientId}`);
   }
 }
