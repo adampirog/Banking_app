@@ -65,6 +65,21 @@ def get_all_users(caller):
     except Exception as e:
         print(e)
         return jsonify({'message': 'An error occured'}), 400
+    
+@app.route('/accounts', methods=['GET'])
+@token_required
+def get_accounts(caller):
+    if caller.userType != 'admin':
+        return jsonify({'message': 'Unauthorized call'}), 400
+    try:
+        users = Account.query.all()
+        result = []
+        for user in users:
+            result.append(user.get_dict())
+        return jsonify(result), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'message': 'An error occured'}), 400
 
 
 @app.route('/user', methods=['PATCH'])

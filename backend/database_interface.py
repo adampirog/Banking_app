@@ -32,6 +32,14 @@ class Account(db.Model):
     def __init__(self, description, balance=0):
         self.balance = balance
         self.description = description
+        
+    def get_dict(self):
+        data = {'id': self.id,
+                'balance': self.balance,
+                'description': self.description,
+                }
+        
+        return data
 
 
 class User(db.Model):
