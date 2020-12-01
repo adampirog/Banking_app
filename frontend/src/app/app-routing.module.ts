@@ -41,7 +41,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
-  { path: '**', redirectTo: 'deposit', canActivate: [ClientAccessGuard] },
+  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({
