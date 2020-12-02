@@ -30,6 +30,13 @@ export interface LoanRequest {
   installments: number;
 }
 
+export interface RepaymentRecord {
+  id: number;
+  amount: number;
+  loanId: number;
+  paymentDate: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -38,11 +45,15 @@ export class LoanService {
   constructor(private userService: UserService,
     private http: HttpClient) { }
 
+  /**
+   * Get loans of currently logged user.
+   */
   getUserLoans(): Observable<Array<Loan>> {
     const user = this.userService.user;
     return this.http.get<Array<Loan>>(`http://localhost:5000/client/loans?clientId=${user.clientId}`);
   }
 
+  /** Create new loan request as logged user. */
   newUserLoan(loan: LoanRequest) {
     const user = this.userService.user;
     return this.newLoan(loan, user.clientId);
@@ -60,6 +71,11 @@ export class LoanService {
     const loan: Loan = { ...acceptedLoan };
     loan.status = LoanStatus.open;
     return this.updateLoan(loan);
+  }
+
+  getLoanHistory(loanId: number) {
+    const user = this.userService.user;
+    return this.http.get<Array<RepaymentRecord>>(`http://localhost:5000/client/loans/records?userId=${user.clientId}&loanId=${loanId}`);
   }
 
   rejectLoan(rejectedLoan: Loan) {

@@ -27,6 +27,9 @@
                 <mat-list-item>{{loan.installmentsPaid}}</mat-list-item>
                 <span>Depozyt źródłowy:</span>
                 <mat-list-item>{{loan.depositId}}</mat-list-item>
+                <span *ngIf="loan.status!=='pending' && loan.status!=='rejected'">
+                    <a [routerLink]="['./history/',loan.id]" mat-raised-button color="primary">Historia spłat</a>
+                </span>
             </mat-list>
         </mat-card-content>
     </mat-card>

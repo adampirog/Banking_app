@@ -1,1 +1,4 @@
-<p>accounts works!</p>
+<mat-card *ngFor="let account of accounts" style="border-style: dashed;">
+    <mat-card-title>{{account.description}}</mat-card-title>
+    <mat-card-content>{{account.balance}} PLN</mat-card-content>
+</mat-card>

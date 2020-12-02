@@ -41,6 +41,7 @@ import { ClientListComponent } from './components/admin/client-list/client-list.
 import { AdminPageComponent } from './components/admin/admin-page/admin-page.component';
 import { AdminLoansComponent } from './components/admin/admin-loans/admin-loans.component';
 import { AccountsComponent } from './components/admin/accounts/accounts.component';
+import { LoanHistoryComponent } from './components/common/loan-history/loan-history.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { AccountsComponent } from './components/admin/accounts/accounts.componen
     AdminPageComponent,
     AdminLoansComponent,
     ClientLoansComponent,
-    AccountsComponent
+    AccountsComponent,
+    LoanHistoryComponent
   ],
   imports: [
     BrowserModule,

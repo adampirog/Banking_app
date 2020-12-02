@@ -1,0 +1,11 @@
+<mat-card *ngFor="let repayment of repaymentRecords" style="border-style: dashed;">
+    <mat-card-content>
+        <mat-list>
+            <span>Data spłaty:</span>
+            <mat-list-item>{{repayment.paymentDate}}</mat-list-item>
+            <span>Kwota spłaty:</span>
+            <mat-list-item>{{repayment.amount}} PLN</mat-list-item>
+        </mat-list>
+
+    </mat-card-content>
+</mat-card>

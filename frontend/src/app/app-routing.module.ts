@@ -15,6 +15,8 @@ import { AdminPageComponent } from './components/admin/admin-page/admin-page.com
 import { ClientLoansComponent } from './components/client/client-loans/client-loans.component';
 import { AdminLoansComponent } from './components/admin/admin-loans/admin-loans.component';
 import { DepositHistoryComponent } from './components/common/deposit-history/deposit-history.component';
+import { AccountsComponent } from './components/admin/accounts/accounts.component';
+import { LoanHistoryComponent } from './components/common/loan-history/loan-history.component';
 
 
 const routes: Routes = [
@@ -23,6 +25,7 @@ const routes: Routes = [
     children: [
       { path: 'loans', component: ClientLoansComponent },
       { path: 'loans/new', component: NewLoanComponent },
+      { path: 'loans/history/:loanId', component: LoanHistoryComponent },
       { path: 'deposit', component: DepositSummaryComponent },
       { path: 'transactions/new', component: NewTransactionComponent },
       { path: 'transactions/:clientId', component: DepositHistoryComponent }
@@ -32,8 +35,10 @@ const routes: Routes = [
     path: 'admin', component: AdminPageComponent, canActivate: [AdminAccessGuard], children: [
       { path: 'clients', component: ClientListComponent },
       { path: 'loans', component: AdminLoansComponent },
+      { path: 'loans/history/:loanId', component: LoanHistoryComponent },
       { path: 'transactions/new', component: NewTransactionComponent },
-      { path: 'transactions/:clientId', component: DepositHistoryComponent }
+      { path: 'transactions/:clientId', component: DepositHistoryComponent },
+      { path: 'accounts', component: AccountsComponent }
     ]
   },
   { path: '', component: LoginComponent },

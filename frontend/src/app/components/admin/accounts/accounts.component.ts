@@ -1,4 +1,12 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+
+
+export interface Account {
+  balance: number;
+  description: string;
+  id: number;
+}
 
 @Component({
   selector: 'app-accounts',
@@ -7,9 +15,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AccountsComponent implements OnInit {
 
-  constructor() { }
+  accounts: Array<Account> = [];
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
+    this.http.get<Array<Account>>('http://localhost:5000/accounts').subscribe({
+      next: res => {
+        this.accounts = res;
+      }
+    });
   }
-
 }
