@@ -1,5 +1,6 @@
 import { _DisposeViewRepeaterStrategy } from '@angular/cdk/collections';
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { DepositService } from '@app/_services/deposit/deposit.service';
 import { User, UserService } from '@app/_services/user/user.service';
 
@@ -12,7 +13,8 @@ export class ClientListComponent implements OnInit {
 
   users: Array<User>;
   constructor(private userService: UserService,
-    private depositService: DepositService) { }
+    private depositService: DepositService,
+    private snackBar: MatSnackBar) { }
 
   async ngOnInit(): Promise<void> {
     this.userService.getUsers().subscribe({
@@ -27,5 +29,21 @@ export class ClientListComponent implements OnInit {
         });
       }
     });
+  }
+
+  createDeposit(user: User) {
+    this.depositService.create(user.id).subscribe({
+      next: value => {
+        this.snackBar.open('Pomyślnie utworzono depozyt!', null, { duration: 3000 });
+        this.depositService.getDepositByClientId(user.id).subscribe({
+          next: deposit => {
+            user.deposit = deposit;
+          }
+        });
+      },
+      error: value => {
+        console.log(value);
+      }
+    })
   }
 }

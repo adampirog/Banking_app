@@ -17,6 +17,9 @@
             <app-deposit-info [deposit]="user.deposit"></app-deposit-info>
             <a [routerLink]="['../transactions',user.id]" mat-raised-button color="primary">Historia</a>
         </div>
-        <mat-card-content *ngIf="!user.deposit">Nic tu nie ma</mat-card-content>
+        <mat-card-content *ngIf="!user.deposit">
+            <div>Ten klient nie ma jeszcze depozytu. Czy chcesz go teraz utworzyć?</div>
+            <button mat-raised-button color="primary" (click)="createDeposit(user)">Utwórz depozyt</button>
+        </mat-card-content>
     </mat-card>
 </mat-card>

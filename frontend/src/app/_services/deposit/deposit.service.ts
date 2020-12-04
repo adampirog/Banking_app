@@ -25,11 +25,13 @@ export class DepositService {
   constructor(private http: HttpClient) { }
 
   getDepositByClientId(clientId: number): Observable<Deposit> {
-    return this.http.get<Deposit>(`http://localhost:5000/client/deposit?clientId=${clientId}`).pipe(map(result => {
-      console.log(result);
-      return result;
-    }));
+    return this.http.get<Deposit>(`http://localhost:5000/client/deposit?clientId=${clientId}`);
   }
+
+  create(clientId: number) {
+    return this.http.post(`http://localhost:5000/client/deposit?clientId=${clientId}`, null);
+  }
+
 
   getOutgoingHistory(clientId: number): Observable<Array<HistoryTransferRecord>> {
     return this.http.get<Array<HistoryTransferRecord>>(`http://localhost:5000/client/deposit/outgoing?clientId=${clientId}`);

@@ -66,7 +66,8 @@ def get_all_users(caller):
     except Exception as e:
         print(e)
         return jsonify({'message': 'An error occured'}), 400
-    
+
+
 @app.route('/accounts', methods=['GET'])
 @token_required
 def get_accounts(caller):
@@ -385,13 +386,17 @@ def get_repayment_records(caller):
 @token_required
 def get_client_repayment_records(caller):
     try:
-        userId = request.args.get('clientId', type=int)
+        userId = request.args.get('userId', type=int)
+        loanId = request.args.get('loanId', type=int)
+        print(caller.userType)
+        print(caller.id)
+        print(userId)
 
         if (caller.userType != 'admin') and (caller.id != userId):
-            return jsonify({'message': 'Unauthorized call'}), 400
+            return jsonify({'message': 'Unauthorized call'}), 409
 
-        records = db.session.query(RepaymentRecord).join(Loan).join(
-            Deposit).join(User).filter(User.id == userId).all()
+        records = db.session.query(RepaymentRecord).filter(
+            RepaymentRecord.loanId == loanId).all()
         result = []
         for item in records:
             result.append(item.get_dict())
